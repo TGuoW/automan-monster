@@ -1,0 +1,950 @@
+$deviceW: 1136px;
+$deviceH: 560;
+body,
+html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#canvas {
+    position: fixed;
+    top: 100px;
+    right: 0;
+    height: 370px;
+    width: 820px;
+    // background: #000;
+}
+
+@keyframes superlight {
+    from {
+        transform: rotate(1deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes showlvl {
+    0% {
+        right: 40%;
+        top: 40%;
+        transform: scale(0);
+    }
+    25% {
+        right: 40%;
+        top: 40%;
+        transform: scale(3);
+    }
+    50% {
+        right: 40%;
+        top: 40%;
+        transform: scale(3);
+    }
+    100% {
+        right: 100px;
+        top: 20px;
+        transform: scale(1);
+    }
+}
+
+@keyframes moveFromTop {
+    from {
+        transform: translateY(-100%);
+    }
+}
+
+@keyframes moveFromBottom {
+    from {
+        transform: translateY(100%);
+    }
+}
+
+@keyframes showRank2 {
+    from {
+        transform: translateY(-100%);
+    }
+}
+
+@keyframes showRank3 {
+    from {
+        transform: translateY(-200%);
+    }
+}
+
+@keyframes showRank4 {
+    from {
+        transform: translateY(-300%);
+    }
+}
+
+.moveFromTop {
+    animation: moveFromTop .6s ease both;
+}
+
+.moveFromBottom {
+    animation: moveFromBottom .6s ease both;
+}
+
+.stage {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #F1F6DF;
+}
+
+.page {
+    width: 1136px;
+    height: 600px;
+    top: 50%;
+    transform: translateY(-50%);
+    position: relative;
+}
+
+@media screen and (min-height: 640px) {
+    .page {
+        width: 1136px;
+        height: 640px;
+        top: 50%;
+        transform: translateY(-50%);
+        position: relative;
+    }
+}
+
+.page-0 {
+    background-color: #F4F9E2;
+    $aotuman-width: 197px;
+    $aotuman-height: 256px;
+    $grass1-width: 154px;
+    $grass1-height: 88px;
+    $grass2-width: 1136px;
+    $grass2-height: 120px;
+    $loading-width: 138px;
+    $loading-height: 45px;
+    .aotuman {
+        width: #{$aotuman-width};
+        height: #{$aotuman-height};
+        background-image: url("../../../static/imgs/Man1.png");
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(#{-$aotuman-width/2 + 15px},
+        #{-$aotuman-height/2 - 50px});
+    }
+    .grass1 {
+        width: #{$grass1-width};
+        height: #{$grass1-height};
+        background-image: url("../../../static/imgs/Grass0.png");
+        background-size: 100%;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(#{-$aotuman-width/2 + 15px - $grass1-width/2},
+        #{$aotuman-height/2 - $grass1-height - 50px});
+    }
+    .grass2 {
+        width: #{$grass2-width};
+        height: #{$grass2-height};
+        background-image: url("../../../static/imgs/Grass3.png");
+        background-repeat: no-repeat;
+        background-size: 100%;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+    .loading {
+        width: 100%;
+        height: #{$loading-height};
+        // background-image: url("loading..png");
+        // background-repeat: no-repeat;
+        // background-size: 100%;
+        position: absolute;
+        top: 50%;
+        text-align: center;
+        transform: translate(0,
+        #{-$loading-height/2 + $aotuman-height/2});
+        .number1,
+        .number2 {
+            width: 32px;
+            height: 35px;
+            display: inline-block;
+            background-image: url("../../../static/imgs/NumLoading.png")
+        }
+        .percent {
+            width: 45px;
+            height: 39px;
+            background: url('../../../static/imgs/loading.png');
+            display: inline-block;
+        }
+    }
+}
+
+.page-1 {
+    background-color: #F1F6DF;
+    $starticon-width: 600px;
+    $starticon-height: 391px;
+    $startbtn-width: 298px;
+    $startbtn-height: 118px;
+    .start-icon {
+        width: #{$starticon-width};
+        height: #{$starticon-height};
+        background-image: url("../../../static/imgs/StartIcon.png");
+        position: absolute;
+        left: #{($deviceW - $starticon-width)/2};
+        top: #{($deviceH - $starticon-height)/2-60px};
+    }
+    .start-btn {
+        width: #{$startbtn-width};
+        height: #{$startbtn-height};
+        background: url("../../../static/imgs/StartBtn.png") no-repeat -0px -118px;
+        position: absolute;
+        left: #{($deviceW - $startbtn-width)/2};
+        top: #{($deviceH - $startbtn-height)/2 + 220};
+        &:hover {
+            background-position: 0 0;
+        }
+    }
+}
+
+.page-2 {
+    // width: 100%;
+    // height: 100%;
+    background-color: #F6F8E1;
+    background-image: url("../../../static/imgs/game_bg.jpg");
+    background-repeat: no-repeat;
+    // background-size: cover;
+    // background-attachment: fixed;
+    .aotuman {
+        width: 262px;
+        height: 290px;
+        z-index: 500;
+        background: url("../../../static/imgs/Aotuman.png") no-repeat -586px -290px;
+        position: absolute;
+        left: 18px;
+        top: 120px;
+        &.aotuman1-1 {
+            width: 262px;
+            height: 290px;
+            background-position: -586px -290px;
+        }
+        &.aotuman2-1 {
+            width: 274px;
+            height: 290px;
+            background-position: -572px -581px;
+        }
+        &.aotuman2-2 {
+            width: 313px;
+            height: 293px;
+            background-position: -0px -0px;
+        }
+        &.aotuman2-3 {
+            width: 274px;
+            height: 290px;
+            background-position: -313px -0px;
+        }
+        &.aotuman3-1 {
+            width: 274px;
+            height: 288px;
+            background-position: -312px -293px;
+        }
+        &.aotuman3-2 {
+            width: 298px;
+            height: 293px;
+            background-position: -0px -586px;
+        }
+        &.aotuman3-3 {
+            width: 274px;
+            height: 293px;
+            background-position: -298px -586px;
+        }
+        &.aotuman4-1 {
+            width: 244px;
+            height: 291px;
+            background-position: -846px -580px;
+        }
+        &.aotuman4-2 {
+            width: 312px;
+            height: 293px;
+            background-position: -0px -293px;
+        }
+    }
+    .topbar {
+        .power-slot {
+            z-index: 1000;
+            width: 521px;
+            height: 122px;
+            background-image: url("../../../static/imgs/PowerSlot.png");
+            // background-position: 0 -122px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            &.full {
+                background-position: 0 122px;
+            }
+        }
+        .power-fill {
+            z-index: 1000;
+            width: 373px;
+            height: 37px;
+            background-image: url("../../../static/imgs/PowerFill.png");
+            background-position: 0 0;
+            transform-origin: 0;
+            position: absolute;
+            left: 131px;
+            top: 36px;
+            border-radius: 5px;
+            overflow: hidden;
+            &.full {
+                background-position: 0 -37px;
+            }
+            &.decreace {
+                transition: transform 1.5s linear;
+            }
+        }
+        .mons-icon {
+            z-index: 1000;
+            width: 86px;
+            height: 86px;
+            background-image: url("../../../static/imgs/MonsIcon.png");
+            position: absolute;
+            left: 640px;
+            top: 10px;
+        }
+        .score {
+            z-index: 1000;
+            height: 70px;
+            line-height: 70px;
+            left: 750px;
+            top: 40px;
+            position: absolute;
+            .NumGameScore-x {
+                display: inline-block;
+                width: 40px;
+                height: 41px;
+                background: url("../../../static/imgs/NumGameScore.png") no-repeat -0px -51px;
+            }
+            .NumGameScore-1 {
+                top: 0px;
+                display: inline-block;
+                width: 36px;
+                height: 51px;
+                background: url("../../../static/imgs/NumGameScore.png") no-repeat -116px -51px;
+            }
+            .NumGameScore-2 {
+                top: 0px;
+                display: inline-block;
+                width: 37px;
+                height: 51px;
+                background: url("../../../static/imgs/NumGameScore.png") no-repeat -79px -0px;
+            }
+            .NumGameScore-3 {
+                top: 0px;
+                display: inline-block;
+                width: 36px;
+                height: 51px;
+                background: url("../../../static/imgs/NumGameScore.png") no-repeat -116px -0px;
+            }
+            .NumGameScore-4 {
+                top: 0px;
+                display: inline-block;
+                width: 41px;
+                height: 51px;
+                background: url("../../../static/imgs/NumGameScore.png") no-repeat -0px -0px;
+            }
+            .NumGameScore-5 {
+                top: 0px;
+                display: inline-block;
+                width: 35px;
+                height: 51px;
+                background: url("../../../static/imgs/NumGameScore.png") no-repeat -116px -102px;
+            }
+            .NumGameScore-6 {
+                top: 0px;
+                display: inline-block;
+                width: 38px;
+                height: 51px;
+                background: url("../../../static/imgs/NumGameScore.png") no-repeat -78px -51px;
+            }
+            .NumGameScore-7 {
+                top: 0px;
+                display: inline-block;
+                width: 38px;
+                height: 51px;
+                background: url("../../../static/imgs/NumGameScore.png") no-repeat -78px -102px;
+            }
+            .NumGameScore-8 {
+                top: 0px;
+                display: inline-block;
+                width: 38px;
+                height: 51px;
+                background: url("../../../static/imgs/NumGameScore.png") no-repeat -41px -0px;
+            }
+            .NumGameScore-9 {
+                top: 0px;
+                display: inline-block;
+                width: 39px;
+                height: 51px;
+                background: url("../../../static/imgs/NumGameScore.png") no-repeat -39px -92px;
+            }
+            .NumGameScore-0 {
+                top: 0px;
+                display: inline-block;
+                width: 39px;
+                height: 51px;
+                background: url("../../../static/imgs/NumGameScore.png") no-repeat -0px -92px;
+            }
+        }
+        .lvl {
+            z-index: 1000;
+            // width: 114px;
+            height: 74px;
+            line-height: 74px;
+            right: 100px;
+            top: 20px;
+            position: absolute;
+            text-align: right;
+            // transform-origin: 50%;
+            $lvlnum-width: 58px;
+            .lvl-num {
+                background-image: url("../../../static/imgs/Num.png");
+                width: #{$lvlnum-width};
+                height: 74px;
+                display: inline-block;
+            }
+            .lvl-num-0 {
+                background-position: 0 0;
+            }
+            .lvl-num-1 {
+                background-position: #{-$lvlnum-width*1} 0;
+            }
+            .lvl-num-2 {
+                background-position: #{-$lvlnum-width*2} 0;
+            }
+            .lvl-num-3 {
+                background-position: #{-$lvlnum-width*3} 0;
+            }
+            .lvl-num-4 {
+                background-position: #{-$lvlnum-width*4} 0;
+            }
+            .lvl-num-5 {
+                background-position: #{-$lvlnum-width*5} 0;
+            }
+            .lvl-num-6 {
+                background-position: #{-$lvlnum-width*6} 0;
+            }
+            .lvl-num-7 {
+                background-position: #{-$lvlnum-width*7} 0;
+            }
+            .lvl-num-8 {
+                background-position: #{-$lvlnum-width*8} 0;
+            }
+            .lvl-num-9 {
+                background-position: #{-$lvlnum-width*9} 0;
+            }
+            &.show {
+                animation: showlvl ease-in-out 2s;
+            }
+        }
+    }
+    // .mons-stage {
+        @at-root {
+            .mons {
+                position: absolute;
+                left: 510px;
+                &.t1 {
+                    background: url("../../../static/imgs/M1.png");
+                }
+                &.t2 {
+                    background: url("../../../static/imgs/M2.png");
+                }
+                &.t3 {
+                    background: url("../../../static/imgs/M3.png");
+                }
+                &.t4 {
+                    background: url("../../../static/imgs/M4.png");
+                }
+                &.s1 {
+                    width: 194px;
+                    height: 176px;
+                    background-position: -194px -328px;
+                }
+                &.s2 {
+                    width: 195px;
+                    height: 176px;
+                    background-position: -0px -152px;
+                }
+                &.s3 {
+                    width: 194px;
+                    height: 176px;
+                    background-position: -194px -328px;
+                }
+                &.s4 {
+                    width: 194px;
+                    height: 176px;
+                    background-position: -195px -152px;
+                }
+                &.s5 {
+                    width: 194px;
+                    height: 176px;
+                    background-position: -0px -328px;
+                }
+                &.s6 {
+                    width: 187px;
+                    height: 180px;
+                    background-position: -389px -0px;
+                }
+                &.s7 {
+                    width: 188px;
+                    height: 171px;
+                    background-position: -388px -328px;
+                }
+                &.s8 {
+                    width: 202px;
+                    height: 152px;
+                    background-position: -0px -0px;
+                }
+            }
+        }
+        .bullet {
+            background-image: url("../../../static/imgs/Bullet.png");
+            width: 148px;
+            height: 47px;
+            z-index: 1000;
+            transition: transform .1s linear;
+        }
+    // }
+    .super-strike {
+        width: 201px;
+        height: 215px;
+        background-image: url("../../../static/imgs/SuperStrike.png");
+        position: absolute;
+        left: 200px;
+        bottom: 130px;
+        z-index: 1000;
+        background-position: 0 0;
+        &.full {
+            background-position: -201px 0;
+        }
+    }
+    .grass {
+        width: 1136px;
+        height: 228px;
+        background-image: url("../../../static/imgs/GameGrass.png");
+        position: absolute;
+        left: 0;
+        z-index: 500;
+        // top: 500px;
+        bottom: 0;
+    }
+    .gap {
+        width: 53px;
+        height: 452px;
+        background-image: url("../../../static/imgs/Gap.png");
+        position: absolute;
+        left: 270px;
+        top: 0;
+    }
+    .control {
+        width: 1136px;
+        height: 139px;
+        z-index: 501;
+        // background-image: url("Key.png");
+        position: absolute;
+        left: 0;
+        // top: 500px;
+        bottom: 0;
+        $controlwidth: 284px;
+        $controlheight: 139px;
+        .key {
+            width: #{$controlwidth};
+            height: #{$controlheight};
+            float: left;
+            background: url("../../../static/imgs/Key.png");
+            z-index: 1;
+        }
+        .control-1 {
+            background-position: 0 0;
+            &:hover {
+                background-position: 0 #{-$controlheight};
+            }
+        }
+        .control-2 {
+            background-position: #{-$controlwidth} 0;
+            &:hover {
+                background-position: #{-$controlwidth} #{-$controlheight};
+            }
+        }
+        .control-3 {
+            background-position: #{-$controlwidth*2} 0;
+            &:hover {
+                background-position: #{-$controlwidth*2} #{-$controlheight};
+            }
+        }
+        .control-4 {
+            background-position: #{-$controlwidth*3} 0;
+            &:hover {
+                background-position: #{-$controlwidth*3} #{-$controlheight};
+            }
+        }
+        &::after {
+            content: "";
+            clear: both;
+        }
+    }
+    .strike-board {
+        width: 713px;
+        height: 92px;
+        z-index: 510;
+        background: url("../../../static/imgs/StrikeBoard.png") no-repeat;
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .super-light {
+        animation: superlight 2s linear infinite;
+        width: 460px;
+        height: 460px;
+        z-index: 100;
+        position: absolute;
+        background: url("../../../static/imgs/SuperLight.png") no-repeat;
+        left: -51px;
+        top: 45px;
+    }
+}
+
+.page-3 {
+    background-color: #FEFFEF;
+    $grass2-width: 1136px;
+    $grass2-height: 261px;
+    $aotuman-width: 718px;
+    $aotuman-height: 615px;
+    $score-board-width: 565px;
+    $score-board-height: 395px;
+    $restart-width: 271px;
+    $restart-height: 136px;
+    $share-width: 341px;
+    $share-height: 136px;
+    .grass {
+        width: #{$grass2-width};
+        height: #{$grass2-height};
+        background-image: url("../../../static/imgs/Grass2.png");
+        position: absolute;
+        left: 0;
+        bottom: 0;
+    }
+    .aotuman {
+        width: #{$aotuman-width};
+        height: #{$aotuman-height};
+        background-image: url("../../../static/imgs/Man2.png");
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    .score-board {
+        width: #{$score-board-width};
+        height: #{$score-board-height};
+        background-image: url("../../../static/imgs/ScoreBoard.png");
+        position: absolute;
+        right: 35px;
+        top: 30px;
+        .score {
+            position: absolute;
+            width: 980px;
+            height: 100px;
+            line-height: 100px;
+            top: 220px;
+            right: 110px;
+            text-align: right;
+            $numscore-width: 93px;
+            .NumScore {
+                display: inline-block;
+                width: #{$numscore-width};
+                height: 99px;
+                background: url("../../../static/imgs/NumScore.png")
+            }
+            .NumScore-0 {
+                background-position: 0px 0px;
+            }
+            .NumScore-1 {
+                background-position: #{-$numscore-width} 0px;
+            }
+            .NumScore-2 {
+                background-position: #{-$numscore-width*2} 0px;
+            }
+            .NumScore-3 {
+                background-position: #{-$numscore-width*3} 0px;
+            }
+            .NumScore-4 {
+                background-position: #{-$numscore-width*4} 0px;
+            }
+            .NumScore-5 {
+                background-position: #{-$numscore-width*5} 0px;
+            }
+            .NumScore-6 {
+                background-position: #{-$numscore-width*6} 0px;
+            }
+            .NumScore-7 {
+                background-position: #{-$numscore-width*7} 0px;
+            }
+            .NumScore-8 {
+                background-position: #{-$numscore-width*8} 0px;
+            }
+            .NumScore-9 {
+                background-position: #{-$numscore-width*9} 0px;
+            }
+        }
+        .highest-score {
+            position: absolute;
+            width: 180px;
+            height: 48px;
+            right: 35px;
+            top: 130px;
+            text-align: center;
+            $highestscore-width: 45px;
+            .HighestScore {
+                display: inline-block;
+                width: #{$highestscore-width};
+                height: 48px;
+                background: url("../../../static/imgs/NumHighest.png")
+            }
+            .HighestScore-0 {
+                background-position: 0px 0px;
+            }
+            .HighestScore-1 {
+                background-position: #{-$highestscore-width} 0px;
+            }
+            .HighestScore-2 {
+                background-position: #{-$highestscore-width*2} 0px;
+            }
+            .HighestScore-3 {
+                background-position: #{-$highestscore-width*3} 0px;
+            }
+            .HighestScore-4 {
+                background-position: #{-$highestscore-width*4} 0px;
+            }
+            .HighestScore-5 {
+                background-position: #{-$highestscore-width*5} 0px;
+            }
+            .HighestScore-6 {
+                background-position: #{-$highestscore-width*6} 0px;
+            }
+            .HighestScore-7 {
+                background-position: #{-$highestscore-width*7} 0px;
+            }
+            .HighestScore-8 {
+                background-position: #{-$highestscore-width*8} 0px;
+            }
+            .HighestScore-9 {
+                background-position: #{-$highestscore-width*9} 0px;
+            }
+        }
+    }
+    .restart {
+        width: #{$restart-width};
+        height: #{$restart-height};
+        background-image: url("../../../static/imgs/Restart.png");
+        background-position: 0 #{$restart-height};
+        position: absolute;
+        left: 140px;
+        bottom: 20px;
+    }
+    .share {
+        width: #{$share-width};
+        height: #{$share-height};
+        background-image: url("../../../static/imgs/Share.png");
+        background-position: 0 #{-$share-height};
+        position: absolute;
+        right: 140px;
+        bottom: 20px;
+    }
+}
+
+.page-4 {
+    background-color: #FEFFEF;
+    $boardW: 646px;
+    $boardH: 480px;
+    $grass2-width: 1136px;
+    $grass2-height: 261px;
+    $startbtn-width: 298px;
+    $startbtn-height: 118px;
+    $aotuman-width: 197px;
+    $aotuman-height: 256px;
+    .board {
+        width: #{$boardW};
+        height: #{$boardH};
+        background: url("../../../static/imgs/RankList.png");
+        background-size: #{$boardW} #{$boardH};
+        background-repeat: no-repeat;
+        position: absolute;
+        left: 50px;
+        top: 30px;
+        z-index: 100;
+        .rank {
+            width: 560px;
+            height: 70px;
+            background: #fff;
+            margin: 10px auto;
+            border-radius: 20px;
+            box-sizing: border-box;
+            box-shadow: 0 5px 0 #9B412B;
+            padding: 3px;
+            animation: showRank 1s;
+            &:first-child {
+                background: #F9FF80;
+                margin-top: 110px;
+            }
+            .rank-item {
+                display: inline-block;
+                float: left;
+            }
+            .rank-img {
+                width: 79px;
+                height: 64px;
+                margin-left: 25px;
+            }
+            &.rank1 {
+                z-index: 4;
+                position: relative;
+                .rank-img {
+                    background: url("../../../static/imgs/Rank1.png");
+                }
+            }
+            &.rank2 {
+                z-index: 3;
+                position: relative;
+                animation: showRank2 0.5s;
+                .rank-img {
+                    background: url("../../../static/imgs/Rank2.png");
+                }
+            }
+            &.rank3 {
+                z-index: 2;
+                position: relative;
+                animation: showRank3 1s;
+                .rank-img {
+                    background: url("../../../static/imgs/Rank3.png");
+                }
+            }
+            &.rank4 {
+                z-index: 1;
+                position: relative;
+                animation: showRank4 1.5s;
+            }
+            .head-img {
+                width: 56px;
+                height: 56px;
+                background: url("../../../static/imgs/User.png") no-repeat;
+                background-size: 100% 100%;
+                border-radius: 10px;
+                margin-left: 10px;
+                margin-top: 4px;
+            }
+            .name {
+                width: 230px;
+                height: 64px;
+                line-height: 64px;
+                font-size: 36px;
+                color: #523B0D;
+                font-weight: 800;
+                margin-left: 5px;
+                overflow: scroll;
+            }
+            .score {
+                width: 132px;
+                height: 35px;
+                line-height: 60px;
+                margin-left: 2px;
+                margin-top: 14.5px;
+                text-align: right;
+                .rank-score {
+                    width: 32px;
+                    height: 35px;
+                    display: inline-block;
+                    background-image: url("../../../static/imgs/NumLoading.png");
+                    &.rank-score0 {
+                        background-position: -0px 0;
+                    }
+                    &.rank-score1 {
+                        background-position: -33px 0;
+                    }
+                    &.rank-score2 {
+                        background-position: -66px 0;
+                    }
+                    &.rank-score3 {
+                        background-position: -99px 0;
+                    }
+                    &.rank-score4 {
+                        background-position: -132px 0;
+                    }
+                    &.rank-score5 {
+                        background-position: -165px 0;
+                    }
+                    &.rank-score6 {
+                        background-position: -198px 0;
+                    }
+                    &.rank-score7 {
+                        background-position: -231px 0;
+                    }
+                    &.rank-score8 {
+                        background-position: -264px 0;
+                    }
+                    &.rank-score9 {
+                        background-position: -297px 0;
+                    }
+                }
+            }
+        }
+    }
+    .grass {
+        width: #{$grass2-width};
+        height: #{$grass2-height};
+        background-image: url("../../../static/imgs/Grass2.png");
+        background-repeat: no-repeat;
+        background-size: 100%;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+    .start-btn {
+        width: #{$startbtn-width};
+        height: #{$startbtn-height};
+        background: url("../../../static/imgs/StartBtn.png") no-repeat -0px -118px;
+        position: absolute;
+        right: 100px;
+        bottom: 70px;
+        &:hover {
+            background-position: 0 0;
+        }
+    }
+    .aotuman {
+        width: #{$aotuman-width};
+        height: #{$aotuman-height};
+        background-image: url("../../../static/imgs/Man1.png");
+        position: absolute;
+        right: 130px;
+        top: 90px;
+    }
+    .sharebg{
+        width: 1136px;
+        height: 600px;
+        background: #000;
+        opacity: 0.5;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index:100;
+    }
+    .sharetip{
+        width: 418px;
+        height: 318px;
+        background: url("../../../static/imgs/ShareTip.png") no-repeat;
+        position: absolute;
+        right: 0;
+        z-index:100;
+        top: 0;
+    }
+}
