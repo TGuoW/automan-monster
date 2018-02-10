@@ -1,9 +1,17 @@
 import Automan from './automan'
 import Monster from './monster'
+import Bullet from './bullet'
+import Level from './level'
 
 let Stage = function () {
   this.automan = new Automan()
+  this.level = 0
+  this.levelObj = new Level()
+  this.powerInter = null
   this.monsterArr = []
+  this.bulletArr = []
+  this.enterPower = false
+  this.score = 0
 
   let stage = document.getElementsByClassName('stage')[0]
   let page = document.createElement('div')
@@ -112,21 +120,16 @@ Stage.prototype = {
     control4.className = 'key control-4'
     let self = this
     control1.addEventListener('touchend', function () {
-      self.automan.hit(self.killMonster.bind(self, 1))
+      self.killOneMonster(1)
     })
     control2.addEventListener('touchend', function () {
-      self.automan.hit(self.killMonster.bind(self, 2))
+      self.killOneMonster(2)
     })
     control3.addEventListener('touchend', function () {
-      self.automan.hit(self.killMonster.bind(self, 3))
+      self.killOneMonster(3)
     })
     control4.addEventListener('touchend', function () {
-      // self.automan.hit(self.killMonster.bind(self, 4))
-      self.automan.hit().then(data => {
-        self.changePower(data)
-        console.log(data)
-      })
-      // self.appendMonster()
+      self.killOneMonster(4)
     })
     page.appendChild(this.automan.render())
     page.appendChild(grass)
@@ -143,30 +146,119 @@ Stage.prototype = {
     control.appendChild(control4)
     page.appendChild(control)
     stage.appendChild(page)
-    this.monsterWalk()
+
+    // this.monsterWalk()
+    self.score = 0
+    // this.renderGameScore(this.score)
+    // 清空等级
+    self.level = 0
+    self.changePower(self.automan.power)
+    self.renderLevel(self.level).then(_ => {
+      self.levelObj.play(self.level + 1, self.appendMonster.bind(self))
+      self.monsterWalk()
+    })
   },
   monsterWalk: function () {
     let self = this
     let timer = window.requestAnimationFrame(function fn () {
       timer = window.requestAnimationFrame(fn)
+      self.renderMonster(timer)
       let cas = document.getElementById('canvas')
       let ctx = cas.getContext('2d')
       ctx.clearRect(0, 0, 820, 370)
-      for (let o in self.monsterArr) {
-        self.monsterArr[o].nextStep()
+      if (self.bulletArr.length > 100) {
+        self.bulletArr.splice(0, 100)
+      }
+      for (let o in self.bulletArr) { // 发射子弹
+        self.bulletArr[o].nextStep()
+      }
+      for (let o = 0; o < self.monsterArr.length; o++) { // 怪兽移动
         if (self.monsterArr[o].x < 0) {
           self.end()
           window.cancelAnimationFrame(timer)
         }
+        if (self.monsterArr[o].status !== 'died') {
+          self.monsterArr[o].nextStep()
+        } else {
+          self.monsterArr.splice(o, 1)
+          o--
+        }
       }
     })
   },
+  renderMonster: function (timer) {
+    let self = this
+    let monsterAlive = this.monsterArr.reduce(function (a, b) {
+      return b.status === 'died' ? a : a + 1
+    }, 0)
+    // 如果当前生存的怪物数量为0且当前关卡的怪物已生成完
+    if (monsterAlive === 0 && self.levelObj.levelClear === true) {
+      console.log(111)
+      // 清空怪兽移动的interval
+      window.cancelAnimationFrame(timer)
+      // 显示进入下一关的动画
+      self.level++
+      self.renderLevel(self.level).then(_ => {
+        self.levelObj.play(self.level, self.appendMonster.bind(self))
+        self.monsterWalk()
+      })
+      // 在3秒后进入下一关
+      // setTimeout(this.playStart.bind(this), 3000)
+    }
+  },
   appendMonster: function () {
+    let self = this
     let monster = new Monster()
-    this.monsterArr.push(monster.render())
-    // monster.render()
     monster.nextStep()
+    self.monsterArr.push(monster.render())
+    // monster.render()
     // window.requestAnimationFrame(monster.nextStep)
+  },
+  killOneMonster: function (type) {
+    let self = this
+    // self.appendMonster()
+    self.killMonster(type)
+    .then(data => {
+      let bullet = new Bullet(self.monsterArr[data].position)
+      self.bulletArr.push(bullet.render())
+      self.monsterArr[data].die()
+      return self.automan.hit()
+    })
+    .then(data => {
+      self.score++
+      self.changeGameScore(self.score)
+      self.changePower(data)
+    })
+  },
+  killMonster: function (type) {
+    // let flag = false
+    let self = this
+    return new Promise(function (resolve, reject) {
+      for (let i = 0; i < self.monsterArr.length; i++) {
+        // 杀死第一个状态是 walk 的对应颜色的怪兽
+        if (self.monsterArr[i].status === 'walk' && self.monsterArr[i].type === type) {
+          self.monsterArr[i].die()
+          // 渲染子弹
+          resolve(i)
+          // flag = true
+          break
+        }
+      }
+    })
+  },
+  killAll: function () {
+    let self = this
+    let monsterAlive = self.monsterArr.filter(function (ele) {
+      return ele.status === 'walk'
+    })
+    self.bulletArr = []
+    for (let i = 0; i < monsterAlive.length; i++) {
+      let bullet = new Bullet(monsterAlive[i].position)
+      self.bulletArr.push(bullet.render())
+      monsterAlive[i].die()
+    }
+    self.score += monsterAlive.length
+    self.changeGameScore(self.score)
   },
   changePower: function (power) {
     let powerFillDOM = document.getElementsByClassName('power-fill')[0]
@@ -175,12 +267,14 @@ Stage.prototype = {
     browsers.forEach(x => {
       powerFillDOM.style[x] = 'scaleX(' + power / 100 + ')'
     })
-    if (power === 100) {
+    if (power === 100 && !this.enterPower) {
       this.powerFull()
     }
   },
   powerFull: function () {
     // const SUPER_TIME = 5000
+    let self = this
+    self.enterPower = true
     let powerFillDOM = document.getElementsByClassName('power-fill')[0]
     let powerSlotDOM = document.getElementsByClassName('power-slot')[0]
     let page = document.getElementsByClassName('page-2')[0]
@@ -194,42 +288,8 @@ Stage.prototype = {
     // strikeBoardDOM.addEventListener('touchend', function () {
     //   this.aotu.hit(this.killFirstMonster.bind(this))
     // }.bind(this))
-    superStrikeDOM.addEventListener('touchend', function () {
-      // 去掉闪烁
-      clearInterval(this.powerInter)
-      powerSlotDOM.className = 'power-slot'
-      powerFillDOM.className = 'power-fill'
-      superStrikeDOM.className = 'super-strike'
-      // 奥特曼进入超级状态
-      this.automan.superMode()
-      page.appendChild(strikeBoardDOM)
-      page.appendChild(superLightDOM)
-      page.removeChild(superStrikeDOM)
-      // 在super time结束后将各个DOM恢复
-      let self = this
-
-      function killAll () {
-        if (self.killFirstMonster()) {
-          self.aotu.superStrike()
-          setTimeout(killAll, 100)
-        } else {
-          powerFillDOM.className = 'power-fill'
-          page.removeChild(strikeBoardDOM)
-          page.removeChild(superLightDOM)
-          self.aotu.rmSuperMode(self.renderPower)
-          self.setMonsterWalkInterval()
-        }
-      }
-      clearInterval(this.monsterInterval)
-      this.renderPower(0)
-      // 为能量条添加动效类名
-      powerFillDOM.className = powerFillClassName + ' decreace'
-      setTimeout(function () {
-        killAll()
-      }.bind(this), 1500)
-    }.bind(this))
     page.appendChild(superStrikeDOM)
-    this.powerInter = setInterval(function () {
+    self.powerInter = setInterval(function () {
       if (powerFillDOM.className === 'power-fill') {
         powerFillDOM.className = 'full power-fill'
       } else {
@@ -246,6 +306,93 @@ Stage.prototype = {
         superStrikeDOM.className = 'super-strike'
       }
     }, 100)
+    superStrikeDOM.addEventListener('touchend', function () {
+      // 去掉闪烁
+      powerSlotDOM.className = 'power-slot'
+      powerFillDOM.className = 'power-fill'
+      superStrikeDOM.className = 'super-strike'
+      // 奥特曼进入超级状态
+      self.automan.superMode()
+      self.killAll()
+      page.appendChild(strikeBoardDOM)
+      page.appendChild(superLightDOM)
+      page.removeChild(superStrikeDOM)
+      // 在super time结束后将各个DOM恢复
+      setTimeout(function () {
+        clearInterval(self.powerInter)
+        powerFillDOM.className = 'power-fill'
+        page.removeChild(strikeBoardDOM)
+        page.removeChild(superLightDOM)
+        self.automan.rmSuperMode()
+        self.changePower(0)
+        powerFillDOM.className = powerFillClassName + ' decreace'
+        self.enterPower = false
+      }, 2000)
+      // 为能量条添加动效类名
+    }.bind(this))
+  },
+  changeGameScore: function (num) {
+    let scoreDOM = document.getElementsByClassName('score')[0]
+    // 清空scoreDOM中的全部子DOM
+    while (scoreDOM.hasChildNodes()) {
+      scoreDOM.removeChild(scoreDOM.lastChild)
+    }
+    // 将 num 转换为 String
+    let numArray = this.num2arr(num)
+    // 在数组最前面添加一个'x'
+    numArray.unshift('x')
+    // 一次添加进对应的DOM
+    numArray.forEach(function (number) {
+      let num = document.createElement('div')
+      num.className = 'NumGameScore-' + number
+      scoreDOM.appendChild(num)
+    })
+  },
+  renderLastScore: function () {
+    let numArray = []
+    let scoreDOM = document.getElementsByClassName('score')[0]
+    while (scoreDOM.hasChildNodes()) {
+      scoreDOM.removeChild(scoreDOM.lastChild)
+    }
+    numArray = this.num2arr(this.score)
+    numArray.forEach(function (number) {
+      let num = document.createElement('div')
+      num.className = 'NumScore NumScore-' + number
+      scoreDOM.appendChild(num)
+    })
+  },
+  renderLevel: function (num) {
+    // 清空lvlDOM里所有的子DOM
+    let self = this
+    return new Promise(function (resolve, reject) {
+      let lvlDOM = document.getElementsByClassName('lvl')[0]
+      while (lvlDOM.hasChildNodes()) {
+        lvlDOM.removeChild(lvlDOM.lastChild)
+      }
+      let lvlArray = self.num2arr(num + 1)
+      console.log(lvlArray)
+      // 渲染关卡数
+      lvlArray.forEach(x => {
+        let lvl = document.createElement('div')
+        lvl.className = 'lvl-num lvl-num-' + x
+        lvlDOM.appendChild(lvl)
+      })
+      // show绑定了对应的animation
+      lvlDOM.className = 'lvl show'
+      // 在2秒后动画结束 去掉show类
+      setTimeout(function () {
+        lvlDOM.className = 'lvl'
+        resolve()
+      }, 2000)
+    })
+  },
+  num2arr: function (num) {
+    let numArray = []
+    do {
+      numArray.push(num % 10)
+      num = Math.floor(num / 10)
+    } while (num / 10 !== 0)
+    return numArray.reverse()
   },
   end: function () {
     let stage = document.getElementsByClassName('stage')[0]
@@ -285,7 +432,7 @@ Stage.prototype = {
       page.appendChild(share)
     }, 600)
     stage.appendChild(page)
-    // this.renderScore(this.score)
+    this.renderLastScore()
     // let highestScore = Cookie.prototype.getCookie('hs')
     // if (highestScore == null || highestScore < this.score) {
     //     Cookie.prototype.setCookie('hs', this.score, '100', 'y');
