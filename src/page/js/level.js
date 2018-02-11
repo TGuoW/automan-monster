@@ -24,11 +24,11 @@ Level.prototype = {
   },
   wrapTimeout (level, appendMonster) {
     if (this.index < this.level[level - 1].length) {
-      // if (appendMonster()) {
-      appendMonster()
-      let waitTime = this.level[level - 1][this.index++] + Math.floor(Math.random() * 100) - 50
-      setTimeout(this.wrapTimeout.bind(this, level, appendMonster), waitTime)
-      // }
+      if (document.getElementById('canvas')) {
+        appendMonster()
+        let waitTime = this.level[level - 1][this.index++] + Math.floor(Math.random() * 100) - 50
+        setTimeout(this.wrapTimeout.bind(this, level, appendMonster), waitTime)
+      }
     } else {
       this.levelClear = true
     }

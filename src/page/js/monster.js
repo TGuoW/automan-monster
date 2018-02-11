@@ -1,7 +1,6 @@
 let Monster = function () {
   let cas = document.getElementById('canvas')
   this.ctx = cas.getContext('2d')
-  // this.pic = document.createElement('div')
   this.x = 700
   this.y = Math.floor(Math.random() * 230)
   this.type = Math.ceil(Math.random() * 4)

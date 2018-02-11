@@ -78,6 +78,8 @@ Stage.prototype = {
     stage.appendChild(page)
   },
   play: function () {
+    this.levelObj = new Level()
+    this.monsterArr = []
     let stage = document.getElementsByClassName('stage')[0]
     if (stage.getElementsByTagName('div')[0]) {
       stage.removeChild(stage.getElementsByTagName('div')[0])
@@ -149,7 +151,7 @@ Stage.prototype = {
 
     // this.monsterWalk()
     self.score = 0
-    // this.renderGameScore(this.score)
+    self.changeGameScore(this.score)
     // 清空等级
     self.level = 0
     self.changePower(self.automan.power)
@@ -438,7 +440,110 @@ Stage.prototype = {
     //     Cookie.prototype.setCookie('hs', this.score, '100', 'y');
     //     highestScore = this.score;
     // }
-    // this.renderHighestScore(highestScore);
+    // this.renderHighestScore(highestScore)
+    this.renderHighestScore()
+  },
+  renderHighestScore: function () {
+    let numArray = []
+    let highestScoreDOM = document.getElementsByClassName('highest-score')[0]
+    while (highestScoreDOM.hasChildNodes()) {
+      highestScoreDOM.removeChild(highestScoreDOM.lastChild)
+    }
+    numArray = this.num2arr(this.score)
+    numArray.forEach(function (number) {
+      let num = document.createElement('div')
+      num.className = 'HighestScore HighestScore-' + number
+      highestScoreDOM.appendChild(num)
+    })
+  },
+  sharePage: function () {
+    let stage = document.getElementsByClassName('stage')[0]
+    if (stage.getElementsByTagName('div')[0]) {
+      stage.removeChild(stage.getElementsByTagName('div')[0])
+    }
+    let page = document.createElement('div')
+    let board = document.createElement('div')
+    let aotuman = document.createElement('div')
+    let grass = document.createElement('div')
+    let rank1 = document.createElement('div')
+    let rank2 = document.createElement('div')
+    let rank3 = document.createElement('div')
+    let rank4 = document.createElement('div')
+    let startBtn = document.createElement('div')
+    let sharebg = document.createElement('div')
+    let sharetip = document.createElement('div')
+    page.className = 'page-4 page'
+    board.className = 'board'
+    aotuman.className = 'aotuman'
+    grass.className = 'grass'
+    rank1.className = 'rank1 rank'
+    rank2.className = 'rank2 rank'
+    rank3.className = 'rank3 rank'
+    rank4.className = 'rank4 rank'
+    sharebg.className = 'sharebg'
+    sharetip.className = 'sharetip'
+    startBtn.className = 'start-btn moveFromBottom'
+    startBtn.addEventListener('touchend', function () {
+      this.play()
+    }.bind(this))
+    stage.appendChild(page)
+
+    page.appendChild(board)
+    page.appendChild(aotuman)
+    page.appendChild(grass)
+    page.appendChild(sharebg)
+    page.appendChild(sharetip)
+    board.appendChild(rank1)
+    board.appendChild(rank2)
+    board.appendChild(rank3)
+    board.appendChild(rank4)
+
+    setTimeout(page.appendChild.bind(page, startBtn), 1000)
+    let dataJson = [{
+      'headImg': 'test.jpg',
+      'name': 'Zero',
+      'score': '1231'
+    }, {
+      'headImg': 'test.jpg',
+      'name': '忘了爱',
+      'score': '422'
+    }, {
+      'headImg': 'test.jpg',
+      'name': '小贞贞',
+      'score': '213'
+    }, {
+      'headImg': 'test.jpg',
+      'name': 'Chen',
+      'score': '113'
+    }]
+    this.appendRank([rank1, rank2, rank3, rank4], dataJson)
+    sharebg.addEventListener('touchend', function () {
+      page.removeChild(sharebg)
+      page.removeChild(sharetip)
+    }.bind(this))
+  },
+  appendRank: function (stage, json) {
+    for (let i = 0; i < 4; i++) {
+      let rankImg = document.createElement('div')
+      let headImg = document.createElement('div')
+      let name = document.createElement('div')
+      let score = document.createElement('div')
+      rankImg.className = 'rank-img rank-item'
+      headImg.className = 'head-img rank-item'
+      name.className = 'name rank-item'
+      score.className = 'score rank-item'
+      stage[i].appendChild(rankImg)
+      stage[i].appendChild(headImg)
+      stage[i].appendChild(name)
+      stage[i].appendChild(score)
+      name.innerHTML = json[i].name
+      let scoreArr = this.num2arr(json[i].score)
+      for (let i = 0; i < scoreArr.length; i++) {
+        let num = document.createElement('div')
+        num.className = 'rank-score rank-score' + scoreArr[i]
+        score.appendChild(num)
+      }
+    }
   }
 }
 
