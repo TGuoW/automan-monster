@@ -1,6 +1,7 @@
 import Automan from './automan'
 import Monster from './monster'
 import Bullet from './bullet'
+import Cookie from './cookie'
 import Level from './level'
 
 let Stage = function () {
@@ -85,12 +86,6 @@ Stage.prototype = {
       stage.removeChild(stage.getElementsByTagName('div')[0])
     }
 
-    let canvas = document.createElement('canvas')
-    canvas.id = 'canvas'
-    canvas.height = '370'
-    canvas.width = '820'
-    document.body.appendChild(canvas)
-
     let page = document.createElement('div')
     let grass = document.createElement('div')
     let gap = document.createElement('div')
@@ -147,6 +142,13 @@ Stage.prototype = {
     control.appendChild(control3)
     control.appendChild(control4)
     page.appendChild(control)
+
+    let canvas = document.createElement('canvas')
+    canvas.id = 'canvas'
+    canvas.height = '370'
+    canvas.width = '820'
+    page.appendChild(canvas)
+
     stage.appendChild(page)
 
     // this.monsterWalk()
@@ -164,10 +166,10 @@ Stage.prototype = {
     let self = this
     let timer = window.requestAnimationFrame(function fn () {
       timer = window.requestAnimationFrame(fn)
-      self.renderMonster(timer)
       let cas = document.getElementById('canvas')
       let ctx = cas.getContext('2d')
       ctx.clearRect(0, 0, 820, 370)
+      self.renderMonster(timer)
       if (self.bulletArr.length > 100) {
         self.bulletArr.splice(0, 100)
       }
@@ -178,6 +180,7 @@ Stage.prototype = {
         if (self.monsterArr[o].x < 0) {
           self.end()
           window.cancelAnimationFrame(timer)
+          break
         }
         if (self.monsterArr[o].status !== 'died') {
           self.monsterArr[o].nextStep()
@@ -314,8 +317,9 @@ Stage.prototype = {
       powerFillDOM.className = 'power-fill'
       superStrikeDOM.className = 'super-strike'
       // 奥特曼进入超级状态
-      self.automan.superMode()
-      self.killAll()
+      self.automan.superMode().then(_ => {
+        self.killAll()
+      })
       page.appendChild(strikeBoardDOM)
       page.appendChild(superLightDOM)
       page.removeChild(superStrikeDOM)
@@ -400,7 +404,7 @@ Stage.prototype = {
     let stage = document.getElementsByClassName('stage')[0]
     if (stage.getElementsByTagName('div')[0]) {
       stage.removeChild(stage.getElementsByTagName('div')[0])
-      document.getElementById('canvas').remove()
+      // document.getElementById('canvas').remove()
     }
     let page = document.createElement('div')
     let grass = document.createElement('div')
@@ -435,21 +439,21 @@ Stage.prototype = {
     }, 600)
     stage.appendChild(page)
     this.renderLastScore()
-    // let highestScore = Cookie.prototype.getCookie('hs')
-    // if (highestScore == null || highestScore < this.score) {
-    //     Cookie.prototype.setCookie('hs', this.score, '100', 'y');
-    //     highestScore = this.score;
-    // }
-    // this.renderHighestScore(highestScore)
-    this.renderHighestScore()
+    let highestScore = Cookie.prototype.getCookie('hs')
+    console.log(highestScore)
+    if (highestScore === null || highestScore < this.score) {
+      Cookie.prototype.setCookie('hs', this.score, 100, 'y')
+      highestScore = this.score
+    }
+    this.renderHighestScore(highestScore)
   },
-  renderHighestScore: function () {
+  renderHighestScore: function (num) {
     let numArray = []
     let highestScoreDOM = document.getElementsByClassName('highest-score')[0]
     while (highestScoreDOM.hasChildNodes()) {
       highestScoreDOM.removeChild(highestScoreDOM.lastChild)
     }
-    numArray = this.num2arr(this.score)
+    numArray = this.num2arr(num)
     numArray.forEach(function (number) {
       let num = document.createElement('div')
       num.className = 'HighestScore HighestScore-' + number

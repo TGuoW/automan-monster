@@ -9,6 +9,7 @@ let Monster = function () {
   this.status = 'walk'
   this.state = 0
   this.area = [[194, 176], [195, 176], [194, 176], [194, 176], [194, 176], [187, 180], [188, 171], [202, 152]]
+  this.currArea = [[129, 117], [130, 117], [129, 117], [129, 117], [129, 117], [125, 120], [125, 114], [133, 101]]
   this.statePosition = [[194, 328], [0, 152], [194, 328], [195, 152], [0, 328], [389, 0], [388, 328], [0, 0]]
 }
 
@@ -25,7 +26,10 @@ Monster.prototype = {
     // setTimeout(function () {
     //   self.status = 'die'
     // }, 200)
-    this.status = 'die'
+    this.status = 'dying'
+    setTimeout(function () {
+      this.status = 'die'
+    }.bind(this), 220)
   },
   nextStep: function () {
     if (this.status === 'walk') {
@@ -43,7 +47,7 @@ Monster.prototype = {
         this.status = 'died'
       }
     }
-    this.ctx.drawImage(this.img, this.statePosition[Math.floor(this.state)][0], this.statePosition[Math.floor(this.state)][1], this.area[Math.floor(this.state)][0], this.area[Math.floor(this.state)][1], this.x, this.y, this.area[Math.floor(this.state)][0], this.area[Math.floor(this.state)][1])
+    this.ctx.drawImage(this.img, this.statePosition[Math.floor(this.state)][0], this.statePosition[Math.floor(this.state)][1], this.area[Math.floor(this.state)][0], this.area[Math.floor(this.state)][1], this.x, this.y, this.currArea[Math.floor(this.state)][0], this.currArea[Math.floor(this.state)][1])
   }
 }
 

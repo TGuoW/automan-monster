@@ -48,13 +48,16 @@ Automan.prototype = {
     }
   },
   superMode: function () {
-    this.super = true
-    this.nextStyle(4, 1, 500)
-    .then(_ => {
-      return this.nextStyle(4, 2, 500)
-    })
-    .then(function () {
-
+    let self = this
+    self.super = true
+    return new Promise(function (resolve, reject) {
+      self.nextStyle(4, 1, 500)
+      .then(_ => {
+        return self.nextStyle(4, 2, 500)
+      })
+      .then(function () {
+        resolve()
+      })
     })
   },
   rmSuperMode: function () {
