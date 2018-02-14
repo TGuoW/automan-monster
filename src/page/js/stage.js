@@ -10,6 +10,7 @@ let Stage = function () {
   this.levelObj = new Level()
   this.powerInter = null
   this.monsterArr = []
+  this.monsterArrY = [] // 按纵坐标排序的怪兽数组
   this.bulletArr = []
   this.enterPower = false
   this.score = 0
@@ -59,6 +60,7 @@ Stage.prototype = {
   },
   start: function () {
     this.monsterArr = []
+    this.monsterArrY = []
     let stage = document.getElementsByClassName('stage')[0]
     if (stage.getElementsByTagName('div')[0]) {
       stage.removeChild(stage.getElementsByTagName('div')[0])
@@ -81,6 +83,7 @@ Stage.prototype = {
   play: function () {
     this.levelObj = new Level()
     this.monsterArr = []
+    this.monsterArrY = []
     let stage = document.getElementsByClassName('stage')[0]
     if (stage.getElementsByTagName('div')[0]) {
       stage.removeChild(stage.getElementsByTagName('div')[0])
@@ -182,10 +185,13 @@ Stage.prototype = {
           window.cancelAnimationFrame(timer)
           break
         }
-        if (self.monsterArr[o].status !== 'died') {
-          self.monsterArr[o].nextStep()
+        if (self.monsterArrY[o].status !== 'died') {
+          self.monsterArrY[o].nextStep()
         } else {
-          self.monsterArr.splice(o, 1)
+          self.monsterArr.splice(self.monsterArr.findIndex(element => {
+            return element === self.monsterArrY[o]
+          }), 1)
+          self.monsterArrY.splice(o, 1)
           o--
         }
       }
@@ -198,7 +204,6 @@ Stage.prototype = {
     }, 0)
     // 如果当前生存的怪物数量为0且当前关卡的怪物已生成完
     if (monsterAlive === 0 && self.levelObj.levelClear === true) {
-      console.log(111)
       // 清空怪兽移动的interval
       window.cancelAnimationFrame(timer)
       // 显示进入下一关的动画
@@ -213,9 +218,22 @@ Stage.prototype = {
   },
   appendMonster: function () {
     let self = this
-    let monster = new Monster()
-    monster.nextStep()
-    self.monsterArr.push(monster.render())
+    let monster = new Monster().render()
+    self.monsterArr.push(monster)
+    let l = 0
+    let r = self.monsterArrY.length - 1
+    let m = Math.round((l + r) / 2)
+    while (l <= r) {
+      if (self.monsterArrY[m].y > monster.y) {
+        r = m - 1
+      } else {
+        l = m + 1
+      }
+      m = Math.round((l + r) / 2)
+    }
+    self.monsterArrY.splice(m, 0, monster)
+    // console.log(self.monsterArrY)
+    // console.log(self.monsterArr)
     // monster.render()
     // window.requestAnimationFrame(monster.nextStep)
   },
