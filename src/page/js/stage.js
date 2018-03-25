@@ -159,6 +159,7 @@ Stage.prototype = {
     self.changeGameScore(this.score)
     // 清空等级
     self.level = 0
+    self.automan.power = 90
     self.changePower(self.automan.power)
     self.renderLevel(self.level).then(_ => {
       self.levelObj.play(self.level + 1, self.appendMonster.bind(self))
@@ -457,13 +458,9 @@ Stage.prototype = {
     }, 600)
     stage.appendChild(page)
     this.renderLastScore()
-    let highestScore = Cookie.prototype.getCookie('hs')
-    console.log(highestScore)
-    if (highestScore === null || highestScore < this.score) {
-      Cookie.prototype.setCookie('hs', this.score, 100, 'y')
-      highestScore = this.score
-    }
-    this.renderHighestScore(highestScore)
+    Cookie.prototype.setCookie('hs', this.score, 100, 'y')
+    let highestScore = Cookie.prototype.getCookie('hs').split(' ')
+    this.renderHighestScore(Number(highestScore[0]))
   },
   renderHighestScore: function (num) {
     let numArray = []
@@ -485,7 +482,7 @@ Stage.prototype = {
     }
     let page = document.createElement('div')
     let board = document.createElement('div')
-    let aotuman = document.createElement('div')
+    // let aotuman = document.createElement('div')
     let grass = document.createElement('div')
     let rank1 = document.createElement('div')
     let rank2 = document.createElement('div')
@@ -496,7 +493,7 @@ Stage.prototype = {
     let sharetip = document.createElement('div')
     page.className = 'page-4 page'
     board.className = 'board'
-    aotuman.className = 'aotuman'
+    // aotuman.className = 'aotuman'
     grass.className = 'grass'
     rank1.className = 'rank1 rank'
     rank2.className = 'rank2 rank'
@@ -511,7 +508,7 @@ Stage.prototype = {
     stage.appendChild(page)
 
     page.appendChild(board)
-    page.appendChild(aotuman)
+    // page.appendChild(aotuman)
     page.appendChild(grass)
     page.appendChild(sharebg)
     page.appendChild(sharetip)
@@ -521,23 +518,31 @@ Stage.prototype = {
     board.appendChild(rank4)
 
     setTimeout(page.appendChild.bind(page, startBtn), 1000)
-    let dataJson = [{
-      'headImg': 'test.jpg',
-      'name': 'Zero',
-      'score': '1231'
-    }, {
-      'headImg': 'test.jpg',
-      'name': '忘了爱',
-      'score': '422'
-    }, {
-      'headImg': 'test.jpg',
-      'name': '小贞贞',
-      'score': '213'
-    }, {
-      'headImg': 'test.jpg',
-      'name': 'Chen',
-      'score': '113'
-    }]
+    // let dataJson = [{
+    //   'headImg': 'test.jpg',
+    //   'name': 'Zero',
+    //   'score': '1231'
+    // }, {
+    //   'headImg': 'test.jpg',
+    //   'name': '忘了爱',
+    //   'score': '422'
+    // }, {
+    //   'headImg': 'test.jpg',
+    //   'name': '小贞贞',
+    //   'score': '213'
+    // }, {
+    //   'headImg': 'test.jpg',
+    //   'name': 'Chen',
+    //   'score': '113'
+    // }]
+    let highScoreArr = Cookie.prototype.getCookie('hs').split(' ')
+    let dataJson = []
+    for (let i = 0; i < highScoreArr.length; i++) {
+      dataJson[i] = {}
+      dataJson[i].headImg = 'test.jpg'
+      dataJson[i].name = 'user'
+      dataJson[i].score = highScoreArr[i]
+    }
     this.appendRank([rank1, rank2, rank3, rank4], dataJson)
     sharebg.addEventListener('touchend', function () {
       page.removeChild(sharebg)

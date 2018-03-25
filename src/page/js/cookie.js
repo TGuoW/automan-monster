@@ -13,9 +13,26 @@ Cookie.prototype = {
       }
     }
 
+    let highArr = this.getCookie('hs').split(' ')
+    highArr.sort(function (a, b) {
+      return Number(b) - Number(a)
+    })
+    let i = 0
+    while (i < highArr.length) {
+      if (value >= Number(highArr[i])) {
+        break
+      }
+      i++
+    }
+    highArr.splice(i, 0, escape(value))
+    if (highArr.length > 4) {
+      highArr.pop()
+    }
+
     let exp = new Date()
     exp.setTime(exp.getTime() + time)
-    document.cookie = name + '=' + escape(value) + ';expires=' + exp.toGMTString()
+    document.cookie = name + '=' + highArr.join(' ') + ';expires=' + exp.toGMTString()
+    console.log(document.cookie)
   },
 
   getCookie: function (name) {
